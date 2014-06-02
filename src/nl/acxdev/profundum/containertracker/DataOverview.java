@@ -1,19 +1,16 @@
-/**
- * 
- */
 package nl.acxdev.profundum.containertracker;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 
-
-public class ScanEdit extends Activity {
+public class DataOverview extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.scan_edit);
+		setContentView(R.layout.data_overview);
+
 	}
 
 	@Override

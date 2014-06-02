@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
                 	
                 	Toast.makeText(context, text, duration).show();
                 	
-                	Intent myIntent = new Intent(MainActivity.this, ScanEdit.class);
+                	Intent myIntent = new Intent(MainActivity.this, ScanView.class);
                 	MainActivity.this.startActivity(myIntent);
                 } else {
                 	Context context = getApplicationContext();
