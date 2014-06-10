@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
                 if(usrS.equals("admin") && pwdS.equals("admin")){
                 	Context context = getApplicationContext();
                 	CharSequence text = "Login succeeded!";
-                	int duration = Toast.LENGTH_LONG;
+                	int duration = Toast.LENGTH_SHORT;
                 	
                 	Toast.makeText(context, text, duration).show();
                 	

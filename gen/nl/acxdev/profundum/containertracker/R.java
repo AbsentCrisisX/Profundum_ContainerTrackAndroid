@@ -30,12 +30,13 @@ public final class R {
         public static final int TextView02=0x7f080008;
         public static final int TextView03=0x7f08000a;
         public static final int TextView04=0x7f08000b;
-        public static final int action_settings=0x7f08000f;
+        public static final int action_settings=0x7f080010;
+        public static final int cont_id=0x7f08000c;
+        public static final int cont_pin=0x7f08000d;
+        public static final int cont_search=0x7f08000e;
         public static final int img_logo=0x7f080000;
         public static final int password=0x7f080003;
-        public static final int progressBar1=0x7f08000e;
-        public static final int scanText=0x7f08000c;
-        public static final int scanView=0x7f08000d;
+        public static final int progressBar1=0x7f08000f;
         public static final int signIn=0x7f080004;
         public static final int textView1=0x7f080001;
         public static final int textView2=0x7f080005;

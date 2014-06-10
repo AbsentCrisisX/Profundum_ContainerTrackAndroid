@@ -8,8 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
-
+import android.widget.Toast;
 
 public class ScanView extends Activity {
 
@@ -17,18 +18,22 @@ public class ScanView extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.scan);
-		
-		Button btn = (Button) findViewById(R.id.scanView);
-		
-		btn.setOnClickListener(new View.OnClickListener() {
-			
+
+		Button search = (Button) findViewById(R.id.cont_search);
+
+		search.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent myIntent = new Intent(ScanView.this, DataOverview.class);
-            	ScanView.this.startActivity(myIntent);
+				Intent detail = new Intent(ScanView.this, DataOverview.class);
+
+				Toast.makeText(getApplicationContext(), "Found the container",
+						Toast.LENGTH_SHORT).show();
+				ScanView.this.startActivity(detail);
+
 			}
 		});
+
 	}
 
 	@Override

@@ -3,23 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/scanText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:gravity="center"
-        android:text="This will be the interface for \nscanning the tags!"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Button
-        android:id="@+id/scanView"
+    <EditText
+        android:id="@+id/cont_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="Scan to View" />
+        android:layout_marginTop="38dp"
+        android:ems="10"
+        android:hint="Container ID"
+        android:inputType="text"
+        android:maxLength="10" />
+
+    <EditText
+        android:id="@+id/cont_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cont_id"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:hint="Container pin"
+        android:inputType="numberPassword"
+        android:maxLength="5" />
+
+    <Button
+        android:id="@+id/cont_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cont_pin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="Search" />
 
 </RelativeLayout>
