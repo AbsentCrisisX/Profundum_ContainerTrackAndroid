@@ -69,7 +69,7 @@ public class ScanView extends Activity {
 	
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		String url = "http://localhost";
+		String url = "https://www.google.com/maps/place/Haven+van+Rotterdam/@51.885,4.2867,17z/data=!3m1!4b1!4m2!3m1!1s0x47c44b942f269a33:0x183e4ce5a09eff9";
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
 		startActivity(i);

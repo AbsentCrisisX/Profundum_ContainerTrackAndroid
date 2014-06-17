@@ -24,8 +24,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:ems="10"
-        android:hint="Container pin"
-        android:inputType="numberPassword"
+        android:hint="Container PIN"
+        android:inputType="number"
         android:maxLength="5" />
     
     <TextView
