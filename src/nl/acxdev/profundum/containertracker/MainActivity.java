@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -15,23 +16,36 @@ public class MainActivity extends Activity {
 	EditText usr;
 	EditText pwd;
 	Button sig;
+	String usrS;
+	String pwdS;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		
 		usr = (EditText) findViewById(R.id.usr);
 		pwd = (EditText) findViewById(R.id.password);
 		sig = (Button) findViewById(R.id.signIn);
+
 		
 		sig.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click   
             	            	        	
-                String usrS = (String) usr.getText().toString();
-                String pwdS = (String) pwd.getText().toString();
+                usrS = (String) usr.getText().toString();
+                pwdS = pwd.getText().toString();
                 
+                AES aes = new AES();
+        		aes.setKey("contra");
+        		aes.encrypt(pwdS);
+        		
+        		String pwdE = aes.getEncryptedString();
+        		Log.d("Ivan", pwdE + " " + pwdS);
+        		
+        		
+        		
                 if(usrS.equals("admin") && pwdS.equals("admin")){
                 	Context context = getApplicationContext();
                 	CharSequence text = "Login succeeded!";

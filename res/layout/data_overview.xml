@@ -81,4 +81,14 @@
         android:background="@drawable/rectangle"
         android:text="Data Data Data" />
 
+    <TextView
+        android:id="@+id/debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TextView04"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
+        android:text="debug"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </RelativeLayout>

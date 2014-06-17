@@ -3,6 +3,7 @@ package nl.acxdev.profundum.containertracker;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.TextView;
 
 public class DataOverview extends Activity {
 
@@ -11,6 +12,10 @@ public class DataOverview extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.data_overview);
 
+		DatabaseConnection dbConn = new DatabaseConnection();
+		
+		TextView debuggin = (TextView) findViewById(R.id.debug);
+		debuggin.setText("");
 	}
 
 	@Override
