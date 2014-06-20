@@ -25,7 +25,7 @@ public class DatabaseConnection extends Activity{
 	 
 		try {
 			connection = DriverManager
-			.getConnection("jdbc:mysql://localhost:3306/contra", "root", "");
+			.getConnection("jdbc:mysql://145.24.222.149:8306/contra", "contrauser", "1234");
 			isConnected = true;
 	 
 		} catch (SQLException e) {
