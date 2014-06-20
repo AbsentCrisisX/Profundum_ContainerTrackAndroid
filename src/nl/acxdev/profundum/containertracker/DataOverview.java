@@ -3,18 +3,15 @@ package nl.acxdev.profundum.containertracker;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.ResultSetMetaData;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-
-import com.mysql.jdbc.*;
 
 public class DataOverview extends Activity {
 
@@ -22,67 +19,66 @@ public class DataOverview extends Activity {
 	Connection conn = null;
 	Statement stmt = null;
 	String conID = null;
-	int shipID;
+	String shipID;
+	DatabaseConnection db;
+	ResultSet rs;
+	String query;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.data_overview);
 
+		String containerid = getIntent().getExtras().getString("CONTAINER");
+		String chipid = getIntent().getExtras().getString("CHIP");
+		String whereStatement = "";
+		if (containerid == null) {
+			chipid = chipid.trim();
+			whereStatement = "con_chip = '" + chipid + "'";
+		} else {
+
+			whereStatement = "smt_con_id = '" + containerid + "'";
+		}
+
 		tx1 = (TextView) findViewById(R.id.TextView01);
 		tx2 = (TextView) findViewById(R.id.TextView02);
+		query = "SELECT smt_con_id, citiesfrom.cit_name AS city_from, citiesto.cit_name AS city_to, cont_name, pac_name , countriesfrom.cou_code AS cou_from_code, countriesto.cou_code AS cou_to_code, pos_longitude, pos_latitude"
+				+ " FROM shipments "
+				+ "NATURAL JOIN shipmentscontent "
+				+ "NATURAL JOIN content "
+				+ "NATURAL JOIN shipmentspackinggroups "
+				+ "NATURAL JOIN packinggroups "
+				+ "LEFT JOIN cities AS citiesfrom ON smt_from_cit_id = citiesfrom.cit_id "
+				+ "LEFT JOIN cities AS citiesto ON smt_from_cit_id = citiesto.cit_id "
+				+ "LEFT JOIN countries AS countriesfrom ON countriesfrom.cou_id = citiesfrom.cit_cou_id "
+				+ "LEFT JOIN countries AS countriesto ON countriesto.cou_id = citiesto.cit_cou_id "
+				+ "LEFT JOIN positions ON smt_id=pos_smt_id "
+				+ "LEFT JOIN containers ON smt_con_id=con_id "
+				+ "WHERE "
+				+ whereStatement + " GROUP BY smt_con_id ORDER BY smt_id DESC LIMIT 1;";
 
-				Thread threadDB = new Thread() {
-					public void run() {
-						try {
-							Class.forName("com.mysql.jdbc.Driver");
-							Log.d("DB_class_test", "Driver registred");
-						} catch (ClassNotFoundException e) {
-							Log.d("DB_class_test", "Where is your MySQL JDBC Driver?");
-							e.printStackTrace();
-							return;
-						}
-						try {
-							conn = DriverManager.getConnection("jdbc:mysql://145.24.222.149:8306/contra","contrauser", "1234");
-							Log.d("DB_driver_test", "Database is connected");
+		Log.d("query", query);
+		db = new DatabaseConnection(query);
+		db.execute();
+		try {
+			rs = db.get();
 
-						} catch (SQLException e) {
-							Log.d("DB_driver_test", "Connection Failed! Check output console");
-							e.printStackTrace();
-							return;
-						}
+			while (rs.next()) {
+				conID = rs.getString("smt_con_id");
+				shipID = rs.getString("smt_con_id");
 
-						
-						String query = "SELECT * FROM shipments JOIN shipmentscontent JOIN shipmentspackinggroups where smt_con_id = 'ID18366162' GROUP BY smt_con_id";
-						try {
-							stmt = conn.createStatement();
-							ResultSet rs = stmt.executeQuery(query);
-							ResultSetMetaData rsmd = rs.getMetaData();
-							while (rs.next()) {	
-								conID = rs.getString("smt_con_id");
-								shipID = rs.getInt("smt_to_cit_id");
-								Log.d("testDB_string", conID);
-								Log.d("testDB_string", shipID + "");
-							} 
-							conn.close();
-						} catch (SQLException e) {
-							Log.d("DB_conn_test", "Results doen't work");
-							e.printStackTrace();
-						} 
-						
-						runOnUiThread(new Runnable() {
-						     @Override
-						     public void run() {
-
-						Log.d("Result check", conID);
-						tx1.setText(conID);
-						tx2.setText("" + shipID);
-						    }
-						});
-					}
-				};
-				
-				threadDB.start();
+				tx1.setText(conID);
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 
 	}
 
