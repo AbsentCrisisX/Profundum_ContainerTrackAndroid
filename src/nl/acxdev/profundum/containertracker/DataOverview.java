@@ -1,28 +1,39 @@
 package nl.acxdev.profundum.containertracker;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
+import android.content.Context;
+import android.location.LocationManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-public class DataOverview extends Activity {
+public class DataOverview extends Activity implements LocationListener {
 
-	TextView tx1, tx2;
+	//TextView tx1, tx2;
+	TextView cId, cFrom, cTo, cCont, cDang;
 	Connection conn = null;
 	Statement stmt = null;
+	
 	String conID = null;
-	String shipID;
+	String coFrom = null;
+	String coTo = null;
+	String coCont = null;
+	String coDang = null;
+	
 	DatabaseConnection db;
 	ResultSet rs;
 	String query;
+	
+	LocationManager locationManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,26 +47,30 @@ public class DataOverview extends Activity {
 			chipid = chipid.trim();
 			whereStatement = "con_chip = '" + chipid + "'";
 		} else {
-
 			whereStatement = "smt_con_id = '" + containerid + "'";
 		}
+		
+		cId = (TextView)findViewById(R.id.cId);
+		cFrom = (TextView)findViewById(R.id.cFrom);
+		cTo = (TextView)findViewById(R.id.cTo);
+		cCont = (TextView)findViewById(R.id.conCont);
+		cDang = (TextView)findViewById(R.id.conDang);
+		
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
 
-		tx1 = (TextView) findViewById(R.id.TextView01);
-		tx2 = (TextView) findViewById(R.id.TextView02);
-		query = "SELECT smt_con_id, citiesfrom.cit_name AS city_from, citiesto.cit_name AS city_to, cont_name, pac_name , countriesfrom.cou_code AS cou_from_code, countriesto.cou_code AS cou_to_code, pos_longitude, pos_latitude"
-				+ " FROM shipments "
-				+ "NATURAL JOIN shipmentscontent "
-				+ "NATURAL JOIN content "
-				+ "NATURAL JOIN shipmentspackinggroups "
-				+ "NATURAL JOIN packinggroups "
-				+ "LEFT JOIN cities AS citiesfrom ON smt_from_cit_id = citiesfrom.cit_id "
-				+ "LEFT JOIN cities AS citiesto ON smt_from_cit_id = citiesto.cit_id "
-				+ "LEFT JOIN countries AS countriesfrom ON countriesfrom.cou_id = citiesfrom.cit_cou_id "
-				+ "LEFT JOIN countries AS countriesto ON countriesto.cou_id = citiesto.cit_cou_id "
-				+ "LEFT JOIN positions ON smt_id=pos_smt_id "
-				+ "LEFT JOIN containers ON smt_con_id=con_id "
-				+ "WHERE "
-				+ whereStatement + " GROUP BY smt_con_id ORDER BY smt_id DESC LIMIT 1;";
+		query = "SELECT smt_con_id, citiesfrom.cit_name AS city_from, citiesto.cit_name AS city_to, cont_name, pac_name , countriesfrom.cou_code AS cou_from_code, countriesto.cou_code AS cou_to_code, pos_longitude, pos_latitude" 
+				+" FROM shipments"
+				+" LEFT JOIN shipmentscontent ON smt_id=cco_smt_id" 
+				+" LEFT JOIN content ON cco_content_id=cont_id"
+				+" LEFT JOIN shipmentspackinggroups ON smt_id=cpg_smt_id" 
+				+" LEFT JOIN packinggroups ON cpg_pac_id=pac_id"
+				+" LEFT JOIN cities AS citiesfrom ON smt_from_cit_id = citiesfrom.cit_id"
+				+" LEFT JOIN cities AS citiesto ON shipments.smt_to_cit_id = citiesto.cit_id"
+				+" LEFT JOIN countries AS countriesfrom ON countriesfrom.cou_id = citiesfrom.cit_cou_id"
+				+" LEFT JOIN countries AS countriesto ON countriesto.cou_id = citiesto.cit_cou_id"
+				+" LEFT JOIN positions ON smt_id=pos_smt_id WHERE " + whereStatement
+				+" GROUP BY smt_con_id ORDER BY pos_smt_id DESC LIMIT 1";
 
 		Log.d("query", query);
 		db = new DatabaseConnection(query);
@@ -65,9 +80,17 @@ public class DataOverview extends Activity {
 
 			while (rs.next()) {
 				conID = rs.getString("smt_con_id");
-				shipID = rs.getString("smt_con_id");
+				coFrom = rs.getString("city_from")+"["+rs.getString("cou_from_code")+"]";
+				coTo = rs.getString("city_to")+"["+rs.getString("cou_to_code")+"]";
+				coCont = rs.getString("cont_name");
+				coDang = rs.getString("pac_name");
 
-				tx1.setText(conID);
+				cId.setText(conID);
+				cFrom.setText(coFrom);
+				cTo.setText(coTo);
+				cCont.setText(coCont);
+				Log.d("contents", rs.getString("cont_name"));
+				cDang.setText(coDang);
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -80,6 +103,30 @@ public class DataOverview extends Activity {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		Log.d("Location", location.getLongitude()+", "+location.getLatitude());
+	}
+
+	@Override
+	public void onProviderDisabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -5,6 +5,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="D:/Projects/Android/Profundum_ContainerTrackAndroid/libs/mysql-connector-java-5.0.8-bin.jar"/>
+	<classpathentry kind="lib" path="D:/Git/Profundum_ContainerTrackAndroid/libs/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

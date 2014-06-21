@@ -1,5 +1,13 @@
 package nl.acxdev.profundum.containertracker;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.concurrent.ExecutionException;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +26,14 @@ public class MainActivity extends Activity {
 	Button sig;
 	String usrS;
 	String pwdS;
+	SHA1 clas;
+	String pwdE;
+	
+	Connection conn = null;
+	Statement stmt = null;
+	DatabaseConnection db;
+	ResultSet rs;
+	String query;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,40 +44,66 @@ public class MainActivity extends Activity {
 		usr = (EditText) findViewById(R.id.usr);
 		pwd = (EditText) findViewById(R.id.password);
 		sig = (Button) findViewById(R.id.signIn);
+		clas = new SHA1();
 
 		
 		sig.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Perform action on click   
+                // Perform action on click
             	            	        	
                 usrS = (String) usr.getText().toString();
                 pwdS = pwd.getText().toString();
                 
-                AES aes = new AES();
-        		aes.setKey("contra");
-        		aes.encrypt(pwdS);
-        		
-        		String pwdE = aes.getEncryptedString();
-        		Log.d("Ivan", pwdE + " " + pwdS);
-        		
-        		
-        		
-                if(usrS.equals("admin") && pwdS.equals("admin")){
-                	Context context = getApplicationContext();
-                	CharSequence text = "Login succeeded!";
-                	int duration = Toast.LENGTH_SHORT;
-                	
-                	Toast.makeText(context, text, duration).show();
-                	
-                	Intent myIntent = new Intent(MainActivity.this, ScanView.class);
-                	MainActivity.this.startActivity(myIntent);
-                } else {
-                	Context context = getApplicationContext();
-                	CharSequence text = "Username or password is incorrect";
-                	int duration = Toast.LENGTH_LONG;
-                	
-                	Toast.makeText(context, text, duration).show();
-                }
+                try {
+					pwdE = clas.sha1(pwdS);
+					Log.d("pwcheck", pwdE);
+					
+					query = "SELECT COUNT(*) FROM users WHERE use_username = '"+usrS+"' AND use_password = '"+pwdE+"'";
+					
+					Log.d("query", query);
+					db = new DatabaseConnection(query);
+					db.execute();
+					try {
+						rs = db.get();
+						
+						while(rs.next()){
+							int count = rs.getInt("COUNT(*)");
+							
+							if(count == 1){
+			                	Context context = getApplicationContext();
+			                	CharSequence text = "Login succeeded!";
+			                	int duration = Toast.LENGTH_SHORT;
+			                	
+			                	Toast.makeText(context, text, duration).show();
+			                	
+			                	Intent myIntent = new Intent(MainActivity.this, ScanView.class);
+			                	MainActivity.this.startActivity(myIntent);
+			                } else {
+			                	Context context = getApplicationContext();
+			                	CharSequence text = "Username or password is incorrect";
+			                	int duration = Toast.LENGTH_LONG;
+			                	
+			                	Toast.makeText(context, text, duration).show();
+			                }
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+					}
+
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 	}

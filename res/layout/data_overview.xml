@@ -5,82 +5,110 @@
     android:background="@drawable/background" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/cIdLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="22dp"
         android:layout_marginTop="22dp"
-        android:text="Label:" />
-
+        android:text="Container ID:" />
+    
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/cFromLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView1"
-        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignLeft="@+id/cIdLabel"
+        android:layout_below="@+id/cIdLabel"
+        android:layout_marginTop="30dp"
+        android:text="City From:" />
+    
+    <TextView
+        android:id="@+id/cToLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cFromLabel"
+        android:layout_below="@+id/cFromLabel"
+        android:layout_marginTop="30dp"
+        android:text="City To:" />
+    
+    <TextView
+        android:id="@+id/conContLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cToLabel"
+        android:layout_marginTop="30dp"
+        android:layout_alignLeft="@+id/cToLabel"
+        android:text="Contents:" />
+    
+    <TextView
+        android:id="@+id/conDangLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/conContLabel"
+        android:layout_marginTop="30dp"
+        android:layout_alignLeft="@+id/conContLabel"
+        android:text="Danger Code:" />
+    
+    <TextView
+        android:id="@+id/cId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/cIdLabel"
+        android:layout_alignBottom="@+id/cIdLabel"
         android:layout_alignParentRight="true"
         android:layout_marginRight="34dp"
         android:background="@drawable/rectangle"
         android:text="Data Data Data" />
-
+    
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/cFrom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView3"
-        android:layout_alignBottom="@+id/textView3"
-        android:layout_alignLeft="@+id/textView2"
-        android:background="@drawable/rectangle"
-        android:text="Data Data Data" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView2"
-        android:layout_marginTop="34dp"
-        android:text="Label:" />
-
-    <TextView
-        android:id="@+id/TextView02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/TextView01"
-        android:layout_alignBottom="@+id/TextView01"
-        android:layout_alignLeft="@+id/textView3"
-        android:text="Label:" />
-
-    <TextView
-        android:id="@+id/TextView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView4"
-        android:layout_below="@+id/textView4"
-        android:layout_marginTop="20dp"
+        android:layout_alignBaseline="@+id/cFromLabel"
+        android:layout_alignBottom="@+id/cFromLabel"
+        android:layout_alignLeft="@+id/cId"
         android:background="@drawable/rectangle"
         android:text="Data Data Data" />
     
     <TextView
-        android:id="@+id/TextView03"
+        android:id="@+id/cTo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/TextView04"
-        android:layout_alignBottom="@+id/TextView04"
-        android:layout_alignLeft="@+id/TextView02"
-        android:text="Label:" />
-
+        android:layout_alignBaseline="@+id/cToLabel"
+        android:layout_alignBottom="@+id/cToLabel"
+        android:layout_alignLeft="@+id/cFrom"
+        android:background="@drawable/rectangle"
+        android:text="Data Data Data" />
+    
     <TextView
-        android:id="@+id/TextView04"
+        android:id="@+id/conCont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView01"
-        android:layout_below="@+id/TextView01"
+        android:layout_alignLeft="@+id/cTo"
+        android:layout_alignBaseline="@+id/conContLabel"
+        android:layout_alignBottom="@+id/conContLabel"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/rectangle"
+        android:text="Data Data Data" />
+    
+    <TextView
+        android:id="@+id/conDang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/conCont"
+        android:layout_alignBaseline="@+id/conDangLabel"
+        android:layout_alignBottom="@+id/conDangLabel"
         android:layout_marginTop="18dp"
         android:background="@drawable/rectangle"
         android:text="Data Data Data" />
 
+    <!--  
+
+    
+    
+    
+
+    -->
 
 </RelativeLayout>
