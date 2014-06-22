@@ -30,20 +30,17 @@ public class DatabaseConnection extends AsyncTask<String, String, ResultSet> {
 		threadDB.start();
 	}
 
-
 	@Override
 	protected ResultSet doInBackground(String... params) {
 
-		
-
 		while (wait) {
-			if(!threadDB.isAlive()){
+			if (!threadDB.isAlive()) {
 				return rs;
 			}
 		}
-		
+
 		return rs;
-		
+
 	}
 
 	Thread threadDB = new Thread() {
@@ -69,20 +66,20 @@ public class DatabaseConnection extends AsyncTask<String, String, ResultSet> {
 			try {
 
 				stmt = conn.createStatement();
-				//rs = stmt.executeQuery(query);
-				if(readOnly == true){
+				// rs = stmt.executeQuery(query);
+				if (readOnly == true) {
 					rs = stmt.executeQuery(query);
 				} else {
 					stmt.executeUpdate(query);
 				}
 				wait = false;
 				Log.d("database", "waiting done;");
-				
+
 			} catch (SQLException e) {
 				Log.d("DB_conn_test", "Results doen't work");
 				e.printStackTrace();
 			}
-			
+
 		}
 	};
 }

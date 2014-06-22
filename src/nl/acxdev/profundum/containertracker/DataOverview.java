@@ -145,7 +145,7 @@ public class DataOverview extends Activity implements LocationListener {
 			while (rs.next()) {
 				pos_smt_id = rs.getInt("pos_smt_id");
 				
-				String query2 = "INSERT INTO positions (pos_smt_id, pos_longitude, pos_latitude, pos_datetime) VALUES ("+pos_smt_id+","+location.getLongitude()+","+location.getLatitude()+", NOW())";
+				String query2 = "INSERT INTO positions (pos_smt_id, pos_latitude, pos_longitude, pos_datetime) VALUES ("+pos_smt_id+","+location.getLongitude()+","+location.getLatitude()+", NOW())";
 				Log.d("query2", query2);
 				
 				db2 = new DatabaseConnection(query2, false);
