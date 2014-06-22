@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 					query = "SELECT COUNT(*) FROM users WHERE use_username = '"+usrS+"' AND use_password = '"+pwdE+"'";
 					
 					Log.d("query", query);
-					db = new DatabaseConnection(query);
+					db = new DatabaseConnection(query, true);
 					db.execute();
 					try {
 						rs = db.get();

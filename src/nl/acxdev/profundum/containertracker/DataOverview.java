@@ -30,6 +30,7 @@ public class DataOverview extends Activity implements LocationListener {
 	String coDang = null;
 	
 	DatabaseConnection db;
+	DatabaseConnection db2;
 	ResultSet rs;
 	String query;
 	
@@ -73,7 +74,7 @@ public class DataOverview extends Activity implements LocationListener {
 				+" GROUP BY smt_con_id ORDER BY pos_smt_id DESC LIMIT 1";
 
 		Log.d("query", query);
-		db = new DatabaseConnection(query);
+		db = new DatabaseConnection(query, true);
 		db.execute();
 		try {
 			rs = db.get();
@@ -108,7 +109,58 @@ public class DataOverview extends Activity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
-		Log.d("Location", location.getLongitude()+", "+location.getLatitude());
+		//Log.d("Location", location.getLongitude()+", "+location.getLatitude());
+		String containerid = getIntent().getExtras().getString("CONTAINER");
+		String chipid = getIntent().getExtras().getString("CHIP");
+		Integer pos_smt_id = 0;
+		String whereStatement = "";
+		if (containerid == null) {
+			chipid = chipid.trim();
+			whereStatement = "con_chip = '" + chipid + "'";
+		} else {
+			whereStatement = "smt_con_id = '" + containerid + "'";
+		}
+		
+		query = "SELECT pos_smt_id" 
+				+" FROM shipments"
+				+" LEFT JOIN shipmentscontent ON smt_id=cco_smt_id" 
+				+" LEFT JOIN content ON cco_content_id=cont_id"
+				+" LEFT JOIN shipmentspackinggroups ON smt_id=cpg_smt_id" 
+				+" LEFT JOIN packinggroups ON cpg_pac_id=pac_id"
+				+" LEFT JOIN cities AS citiesfrom ON smt_from_cit_id = citiesfrom.cit_id"
+				+" LEFT JOIN cities AS citiesto ON shipments.smt_to_cit_id = citiesto.cit_id"
+				+" LEFT JOIN countries AS countriesfrom ON countriesfrom.cou_id = citiesfrom.cit_cou_id"
+				+" LEFT JOIN countries AS countriesto ON countriesto.cou_id = citiesto.cit_cou_id"
+				+" LEFT JOIN positions ON smt_id=pos_smt_id WHERE " + whereStatement
+				+" GROUP BY smt_con_id"
+				+" ORDER BY smt_id DESC, pos_smt_id DESC LIMIT 1";
+
+		Log.d("query", query);
+		db = new DatabaseConnection(query, true);
+		db.execute();
+		
+		try {
+			rs = db.get();
+
+			while (rs.next()) {
+				pos_smt_id = rs.getInt("pos_smt_id");
+				
+				String query2 = "INSERT INTO positions (pos_smt_id, pos_longitude, pos_latitude, pos_datetime) VALUES ("+pos_smt_id+","+location.getLongitude()+","+location.getLatitude()+", NOW())";
+				Log.d("query2", query2);
+				
+				db2 = new DatabaseConnection(query2, false);
+				db2.execute();
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 
 	@Override

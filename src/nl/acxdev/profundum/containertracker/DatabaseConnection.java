@@ -21,10 +21,12 @@ public class DatabaseConnection extends AsyncTask<String, String, ResultSet> {
 	String shipID;
 	String query;
 	ResultSet rs;
+	boolean readOnly = true;
 	boolean wait = true;
 
-	public DatabaseConnection(String query) {
+	public DatabaseConnection(String query, boolean readOnly) {
 		this.query = query;
+		this.readOnly = readOnly;
 		threadDB.start();
 	}
 
@@ -67,8 +69,12 @@ public class DatabaseConnection extends AsyncTask<String, String, ResultSet> {
 			try {
 
 				stmt = conn.createStatement();
-				rs = stmt.executeQuery(query);
-				
+				//rs = stmt.executeQuery(query);
+				if(readOnly == true){
+					rs = stmt.executeQuery(query);
+				} else {
+					stmt.executeUpdate(query);
+				}
 				wait = false;
 				Log.d("database", "waiting done;");
 				
