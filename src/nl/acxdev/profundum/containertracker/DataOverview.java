@@ -41,16 +41,6 @@ public class DataOverview extends Activity implements LocationListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.data_overview);
 
-		String containerid = getIntent().getExtras().getString("CONTAINER");
-		String chipid = getIntent().getExtras().getString("CHIP");
-		String whereStatement = "";
-		if (containerid == null) {
-			chipid = chipid.trim();
-			whereStatement = "con_chip = '" + chipid + "'";
-		} else {
-			whereStatement = "smt_con_id = '" + containerid + "'";
-		}
-		
 		cId = (TextView)findViewById(R.id.cId);
 		cFrom = (TextView)findViewById(R.id.cFrom);
 		cTo = (TextView)findViewById(R.id.cTo);
@@ -60,49 +50,18 @@ public class DataOverview extends Activity implements LocationListener {
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
 
-		query = "SELECT smt_con_id, citiesfrom.cit_name AS city_from, citiesto.cit_name AS city_to, cont_name, pac_name , countriesfrom.cou_code AS cou_from_code, countriesto.cou_code AS cou_to_code, pos_longitude, pos_latitude" 
-				+" FROM shipments"
-				+" LEFT JOIN shipmentscontent ON smt_id=cco_smt_id" 
-				+" LEFT JOIN content ON cco_content_id=cont_id"
-				+" LEFT JOIN shipmentspackinggroups ON smt_id=cpg_smt_id" 
-				+" LEFT JOIN packinggroups ON cpg_pac_id=pac_id"
-				+" LEFT JOIN cities AS citiesfrom ON smt_from_cit_id = citiesfrom.cit_id"
-				+" LEFT JOIN cities AS citiesto ON shipments.smt_to_cit_id = citiesto.cit_id"
-				+" LEFT JOIN countries AS countriesfrom ON countriesfrom.cou_id = citiesfrom.cit_cou_id"
-				+" LEFT JOIN countries AS countriesto ON countriesto.cou_id = citiesto.cit_cou_id"
-				+" LEFT JOIN positions ON smt_id=pos_smt_id WHERE " + whereStatement
-				+" GROUP BY smt_con_id ORDER BY pos_smt_id DESC LIMIT 1";
+		conID = getIntent().getExtras().getString("CONID");
+		coFrom = getIntent().getExtras().getString("CITYFROM");
+		coTo = getIntent().getExtras().getString("CITYTO");
+		coCont = getIntent().getExtras().getString("CONTENTS");
+		coDang = getIntent().getExtras().getString("DANGER");
 
-		Log.d("query", query);
-		db = new DatabaseConnection(query, true);
-		db.execute();
-		try {
-			rs = db.get();
+		cId.setText(conID);
+		cFrom.setText(coFrom);
+		cTo.setText(coTo);
+		cCont.setText(coCont);
 
-			while (rs.next()) {
-				conID = rs.getString("smt_con_id");
-				coFrom = rs.getString("city_from")+"["+rs.getString("cou_from_code")+"]";
-				coTo = rs.getString("city_to")+"["+rs.getString("cou_to_code")+"]";
-				coCont = rs.getString("cont_name");
-				coDang = rs.getString("pac_name");
-
-				cId.setText(conID);
-				cFrom.setText(coFrom);
-				cTo.setText(coTo);
-				cCont.setText(coCont);
-				Log.d("contents", rs.getString("cont_name"));
-				cDang.setText(coDang);
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+		cDang.setText(coDang);
 
 	}
 

@@ -3,7 +3,11 @@
  */
 package nl.acxdev.profundum.containertracker;
 
+import java.sql.ResultSet;
+import java.util.concurrent.ExecutionException;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -25,28 +29,32 @@ public class ScanView extends Activity {
 	Button search;
 	ImageView imagedb;
 	TextView textDBcon;
-	EditText container;
+	EditText container,pin;
 	DatabaseConnection dbConn;
 	NFCForegroundUtil nfcForegroundUtil = null;
+	
+	String whereStatement;
+	ResultSet rs;
+	String query;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.scan);
 
-		// dbConn = new DatabaseConnection();
 		nfcForegroundUtil = new NFCForegroundUtil(this);
 		search = (Button) findViewById(R.id.cont_search);
 		imagedb = (ImageView) findViewById(R.id.imageViewDB);
 		textDBcon = (TextView) findViewById(R.id.textViewDB);
 		container = (EditText) findViewById(R.id.cont_id);
+		pin = (EditText) findViewById(R.id.cont_pin);
 
 		search.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 
-				getContainerData(container.getText().toString(), false);
+				getContainerData(container.getText().toString(), pin.getText().toString(), false);
 
 			}
 		});
@@ -73,14 +81,68 @@ public class ScanView extends Activity {
 		super.onPause();
 	}
 
-	public void getContainerData(String id, boolean byScan) {
+	public void getContainerData(String id, String pin, boolean byScan) {
 		Intent detail = new Intent(ScanView.this, DataOverview.class);
 		if (byScan) {
 			detail.putExtra("CHIP", id);
+			whereStatement = "con_chip = '" + id + "'";
 		} else {
 			detail.putExtra("CONTAINER", id);
+			whereStatement = "smt_con_id = '" + id + "' AND c.con_code='" + pin + "'";
 		}
-		ScanView.this.startActivity(detail);
+		
+		query = "SELECT smt_con_id, citiesfrom.cit_name AS city_from, citiesto.cit_name AS city_to, cont_name, pac_name , countriesfrom.cou_code AS cou_from_code, countriesto.cou_code AS cou_to_code, pos_longitude, pos_latitude" 
+				+" FROM shipments"
+				+" LEFT JOIN containers AS c ON smt_con_id = c.con_id"
+				+" LEFT JOIN shipmentscontent ON smt_id=cco_smt_id" 
+				+" LEFT JOIN content ON cco_content_id=cont_id"
+				+" LEFT JOIN shipmentspackinggroups ON smt_id=cpg_smt_id" 
+				+" LEFT JOIN packinggroups ON cpg_pac_id=pac_id"
+				+" LEFT JOIN cities AS citiesfrom ON smt_from_cit_id = citiesfrom.cit_id"
+				+" LEFT JOIN cities AS citiesto ON shipments.smt_to_cit_id = citiesto.cit_id"
+				+" LEFT JOIN countries AS countriesfrom ON countriesfrom.cou_id = citiesfrom.cit_cou_id"
+				+" LEFT JOIN countries AS countriesto ON countriesto.cou_id = citiesto.cit_cou_id"
+				+" LEFT JOIN positions ON smt_id=pos_smt_id WHERE " + whereStatement
+				+" GROUP BY smt_con_id ORDER BY pos_smt_id DESC LIMIT 1";
+		
+		Log.d("query", query);
+		dbConn = new DatabaseConnection(query, true);
+		dbConn.execute();
+		try {
+			rs = dbConn.get();
+			
+			Log.d("results", rs.toString());
+
+			while (rs.next()) {
+				detail.putExtra("CONID", rs.getString("smt_con_id"));
+				detail.putExtra("CITYFROM", rs.getString("city_from")+"["+rs.getString("cou_from_code")+"]");
+				detail.putExtra("CITYTO", rs.getString("city_to")+"["+rs.getString("cou_to_code")+"]");
+				detail.putExtra("CONTENTS", rs.getString("cont_name"));
+				detail.putExtra("DANGER", rs.getString("pac_name"));
+				
+				Context context = getApplicationContext();
+            	CharSequence text = "Found the container!";
+            	int duration = Toast.LENGTH_LONG;
+            	
+            	Toast.makeText(context, text, duration).show();
+				ScanView.this.startActivity(detail);
+			}
+			Context context = getApplicationContext();
+        	CharSequence text = "Couldn't find a container!";
+        	int duration = Toast.LENGTH_LONG;
+        	
+        	Toast.makeText(context, text, duration).show();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		//ScanView.this.startActivity(detail);
 
 	}
 
@@ -94,7 +156,7 @@ public class ScanView extends Activity {
 		 */
 		
 		Log.d("scantag: ", bytesToHex(tag.getId()));
-		getContainerData(bytesToHex(tag.getId()), true);
+		getContainerData(bytesToHex(tag.getId()), null, true);
 
 	}
 
